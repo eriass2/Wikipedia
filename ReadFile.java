@@ -8,7 +8,7 @@ public class ReadFile {
 	
 	public static void main(String[] args){
 		
-		readArticle("krut.txt");
+		readArticle("krut.txt",3);
 		
 		
 		for(String s : links){
@@ -16,7 +16,9 @@ public class ReadFile {
 		}
 	}
 	
-	public static void readArticle(String path){
+	public static void readArticle(String path, double stopAtRow){
+		
+		double currentRow = 0;
 		
 		try{
 			// Open file
@@ -26,12 +28,14 @@ public class ReadFile {
 			String strLine;
 	
 			//Read File Line By Line
-			while ((strLine = br.readLine()) != null)   {
+			while ((strLine = br.readLine()) != null && currentRow<stopAtRow)   {
 				
 				//Check if line contains link
 				if(strLine.contains("[["))
 					//If line contains link, add to list
 					linkRad.add(strLine);
+				
+				currentRow++;
 			}
 			//Close the input stream
 			br.close();
