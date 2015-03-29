@@ -8,7 +8,7 @@ public class ReadFile {
 	
 	public static void main(String[] args){
 		
-		readArticle("krut.txt",3);
+		readArticle("krut.txt",5);
 		
 		
 		for(String s : links){
