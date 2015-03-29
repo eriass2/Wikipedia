@@ -8,7 +8,8 @@ public class ReadFile {
 	
 	public static void main(String[] args){
 		
-		readArticle("krut.txt",5);
+		//readArticle("mälaren.txt",34);
+		readArticle("mälaren.txt");
 		
 		
 		for(String s : links){
@@ -36,6 +37,39 @@ public class ReadFile {
 					linkRad.add(strLine);
 				
 				currentRow++;
+			}
+			//Close the input stream
+			br.close();
+		
+		}catch(FileNotFoundException e){
+			System.err.println("File is very missing.");
+			System.exit(0);
+		}catch(IOException e){
+			System.err.println("File is very error.");
+			System.exit(0);
+		}
+		
+		fetchLinks(linkRad);
+		
+	}
+	
+public static void readArticle(String path){
+		
+		try{
+			// Open file
+			FileInputStream fstream = new FileInputStream(path);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"));
+	
+			String strLine;
+	
+			//Read File Line By Line
+			while ((strLine = br.readLine()) != null)   {
+				
+				//Check if line contains link
+				if(strLine.contains("[["))
+					//If line contains link, add to list
+					linkRad.add(strLine);
+				
 			}
 			//Close the input stream
 			br.close();
