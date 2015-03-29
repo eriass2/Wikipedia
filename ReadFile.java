@@ -1,17 +1,21 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class ReadFile {
 	
 	public static ArrayList<String> linkRad = new ArrayList<String>();
 	public static ArrayList<String> links = new ArrayList<String>();
+	public static HashMap<String, Integer> articles = new HashMap<String, Integer>();
+	
 	
 	public static void main(String[] args){
 		
 		//readArticle("mälaren.txt",34);
-		readArticle("mälaren.txt");
+		getArticles("svwiki-latest-pages-meta-current.xml");
 		
-		saveListToFile(links);
+		//saveListToFile(links);
 		
 	}
 	
@@ -51,23 +55,38 @@ public class ReadFile {
 		
 	}
 	
-	public static void readArticle(String path){
+	public static void getArticles(String path){
+		
+		String tempRow = "";
+		String strLine = "";
 		
 		try{
 			// Open file
 			FileInputStream fstream = new FileInputStream(path);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"));
-	
-			String strLine;
-	
+			
 			//Read File Line By Line
-			while ((strLine = br.readLine()) != null)   {
+			while ((strLine = br.readLine().replaceAll("\\s+","")) != null)   {
 				
-				//Check if line contains link
-				if(strLine.contains("[["))
-					//If line contains link, add to list
-					linkRad.add(strLine);
+				//Check if line contains name of article (<title>)
+				if(strLine.startsWith("<title>")){
+					tempRow = strLine;
 				
+					strLine = br.readLine().replaceAll("\\s+","");
+					
+					if(strLine.equals("<ns>0</ns>")){
+						tempRow = tempRow.replace("<title>", "");
+						tempRow = tempRow.replace("</title>", "");
+						
+						if(articles.containsKey(tempRow) && tempRow != null){
+							articles.put(tempRow, articles.get(tempRow)+1);
+						}
+						else{
+							articles.put(tempRow, 1);
+						}
+						
+					}
+				}
 			}
 			//Close the input stream
 			br.close();
@@ -80,7 +99,12 @@ public class ReadFile {
 			System.exit(0);
 		}
 		
-		fetchLinks(linkRad);
+		for(Entry<String, Integer> entry : articles.entrySet()) {
+		    System.out.println(entry.getKey() + " " + entry.getValue());
+
+		    // do what you have to do here
+		    // In your case, an other loop.
+		}
 		
 	}
 	
@@ -88,6 +112,7 @@ public class ReadFile {
 		
 		int fileVersion = 0;
 		boolean fileExists = true;
+		
 		
 		try {
 			
@@ -124,7 +149,7 @@ public class ReadFile {
  
  
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Save is very error.");
 		}
 		
 	}
