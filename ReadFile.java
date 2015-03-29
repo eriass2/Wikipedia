@@ -1,25 +1,38 @@
 import java.io.*;
-
-
+import java.util.ArrayList;
 
 public class ReadFile {
+	
+	public static ArrayList<String> linkRad = new ArrayList<String>();
+	public static ArrayList<String> links = new ArrayList<String>();
+	
 	public static void main(String[] args){
 		
+		readArticle("krut.txt");
+		
+		
+		for(String s : links){
+			System.out.println(s);
+		}
+	}
+	
+	public static void readArticle(String path){
+		
 		try{
-			// Open the file
-			
-			FileInputStream fstream = new FileInputStream("/home/erik/Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
+			// Open file
+			FileInputStream fstream = new FileInputStream(path);
 			BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"));
-			
-			
+	
 			String strLine;
 	
 			//Read File Line By Line
 			while ((strLine = br.readLine()) != null)   {
-			  // Print the content on the console
-			  System.out.println (strLine);
+				
+				//Check if line contains link
+				if(strLine.contains("[["))
+					//If line contains link, add to list
+					linkRad.add(strLine);
 			}
-	
 			//Close the input stream
 			br.close();
 		
@@ -31,5 +44,55 @@ public class ReadFile {
 			System.exit(0);
 		}
 		
+		fetchLinks(linkRad);
+		
 	}
+	
+	public static void fetchLinks(ArrayList<String> linkList){
+		
+		String temp = "";
+		boolean addChar = false;
+		
+		for(String str : linkList){
+			
+			for(int i=0; i < str.length(); i++){
+				
+				if(str.charAt(i) == '['){
+					addChar = true;
+				}
+				else if(str.charAt(i) == ']' || str.charAt(i)== '|'){
+					addChar = false;
+					
+					if(validLink(temp)){
+						links.add(temp);
+					}
+					temp = "";
+				}
+				
+				if (addChar){
+					if(str.charAt(i) != '[' && str.charAt(i) != ' ' && str.charAt(i) != '_')
+						temp += str.charAt(i);
+				}
+			}
+		}
+	}
+	
+	public static boolean validLink(String link){
+		if(!picLink(link) && link != null && !link.isEmpty()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public static boolean picLink(String link){
+		if(link.startsWith("Bild:")){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 }
