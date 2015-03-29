@@ -11,10 +11,8 @@ public class ReadFile {
 		//readArticle("mälaren.txt",34);
 		readArticle("mälaren.txt");
 		
+		saveListToFile(links);
 		
-		for(String s : links){
-			System.out.println(s);
-		}
 	}
 	
 	public static void readArticle(String path, double stopAtRow){
@@ -53,7 +51,7 @@ public class ReadFile {
 		
 	}
 	
-public static void readArticle(String path){
+	public static void readArticle(String path){
 		
 		try{
 			// Open file
@@ -83,6 +81,51 @@ public static void readArticle(String path){
 		}
 		
 		fetchLinks(linkRad);
+		
+	}
+	
+	public static void saveListToFile(ArrayList<String> myList){
+		
+		int fileVersion = 0;
+		boolean fileExists = true;
+		
+		try {
+			
+			File theFile;
+ 
+			// if file doesnt exists, then create it
+			while(fileExists){
+				
+				theFile = new File("newList" + fileVersion + ".txt");
+				
+				if(theFile.exists()){
+					fileVersion++;
+				}
+				else{
+					
+					fileExists = false;
+					
+					theFile.createNewFile();
+					
+					
+					FileWriter fw = new FileWriter(theFile.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					
+					for(String s : myList){
+						bw.write(s + "\r\n");
+					}
+					
+					bw.close();
+					
+					System.out.println("File saved.");
+					
+				}
+			}
+ 
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
