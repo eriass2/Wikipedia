@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class ReadFile {
@@ -8,19 +10,48 @@ public class ReadFile {
 	public static ArrayList<String> linkRad = new ArrayList<String>();
 	public static ArrayList<String> links = new ArrayList<String>();
 	public static HashMap<String, Integer> articles = new HashMap<String, Integer>();
+        public static HashMap<String, Integer> missing = new HashMap<String, Integer>();
 	
             /**
          * @param args the command line arguments
          */
 	
 	public static void main(String[] args){
-		
+		//Gui med fil väljare
+                //Progression feedback
+                //String som samma objekt, cool grej som kan lösa minne problemt
 		//readArticle("m�laren.txt",34);
 		getArticles("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
+                readArticle("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml", 0x5f5e100);
+                linkMissing();
 		
 		//saveListToFile(links);
 		
 	}
+        public static void linkMissing(){
+            
+            for(String s : links){
+                if(!articles.containsKey(s)){
+                    if(missing.containsKey(s)){
+                        int g = missing.get(s);
+                        missing.replace(s, g, g+1);
+                    }else{
+                        missing.put(s, 1);
+                    }
+                }
+            }
+            Iterator it = missing.entrySet().iterator();
+            ArrayList<String> temp = new ArrayList<String>();
+            while(it.hasNext()){
+                Map.Entry pair = (Map.Entry)it.next();
+                String text = (pair.getKey() + " - " + pair.getValue());
+                it.remove();
+            }
+            saveListToFile(temp);
+        }
+        
+	
+        
 	
 	public static void readArticle(String path, double stopAtRow){
 		
