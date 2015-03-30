@@ -9,11 +9,14 @@ public class ReadFile {
 	public static ArrayList<String> links = new ArrayList<String>();
 	public static HashMap<String, Integer> articles = new HashMap<String, Integer>();
 	
+            /**
+         * @param args the command line arguments
+         */
 	
 	public static void main(String[] args){
 		
-		//readArticle("mälaren.txt",34);
-		getArticles("svwiki-latest-pages-meta-current.xml");
+		//readArticle("mï¿½laren.txt",34);
+		getArticles("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
 		
 		//saveListToFile(links);
 		
@@ -59,6 +62,7 @@ public class ReadFile {
 		
 		String tempRow = "";
 		String strLine = "";
+		double currentRow = 0;
 		
 		try{
 			// Open file
@@ -66,8 +70,8 @@ public class ReadFile {
 			BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"));
 			
 			//Read File Line By Line
-			while ((strLine = br.readLine().replaceAll("\\s+","")) != null)   {
-				
+			while ((strLine = br.readLine()) != null)   {
+				strLine = strLine.replaceAll("\\s+","");
 				//Check if line contains name of article (<title>)
 				if(strLine.startsWith("<title>")){
 					tempRow = strLine;
@@ -86,6 +90,10 @@ public class ReadFile {
 						}
 						
 					}
+				}
+				currentRow++;
+				if(currentRow % 100000 == 0){
+					System.out.println(currentRow/100000 + " " + strLine );
 				}
 			}
 			//Close the input stream
