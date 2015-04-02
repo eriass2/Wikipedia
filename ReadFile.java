@@ -59,10 +59,10 @@ public class ReadFile {
 
                 //Read File Line By Line
                 while ((strLine = br.readLine()) != null && currentRow < stopAtRow) {
-                    strLine = strLine.replaceAll("\\s+", "");
+                    strLine = strLine;//.replaceAll("\\s+", "");
                     String temp = strLine;
                     
-                    if (strLine.startsWith("<title>")) {                        
+                    if (strLine.startsWith("    <title>")) {                        
                         strLine = br.readLine().replaceAll("\\s+", "");
                         artikelrymden = strLine.equals("<ns>0</ns>");
                     }
@@ -109,18 +109,22 @@ public class ReadFile {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"))) {
                 //Read File Line By Line
                 while ((strLine = br.readLine()) != null) {
-                    strLine = strLine.replaceAll("\\s+", "");
+                    strLine = strLine;
                     //Check if line contains name of article (<title>)
-                    if (strLine.startsWith("<title>")) {
+                    if (strLine.startsWith("    <title>")) {
                         tempRow = strLine;
 
                         strLine = br.readLine().replaceAll("\\s+", "");
 
                         if (strLine.equals("<ns>0</ns>")) {
-                            tempRow = tempRow.replace("<title>", "");
+                            tempRow = tempRow.replace("    <title>", "");
                             tempRow = tempRow.replace("</title>", "");
 
+                            tempRow = tempRow.replace('_', ' ');
+
                             articles.put(tempRow.toLowerCase(), 1);
+//                           System.out.println(tempRow);
+//                            Thread.sleep(1000);
 
                         }
                     }
@@ -141,7 +145,7 @@ public class ReadFile {
         }
 
         System.out.println("Antal hittade artiklar :" + articles.size() + "\n Antal rader lästa :" + currentRow);
-        Thread.sleep(4000);
+        Thread.sleep(30000);
     }
 
     public static void saveListToFile() {
@@ -165,7 +169,7 @@ public class ReadFile {
                     fileExists = false;
 
                     theFile.createNewFile();
-
+                    articles.clear();
                     FileWriter fw = new FileWriter(theFile.getAbsoluteFile());
                     try (BufferedWriter bw = new BufferedWriter(fw)) {
                         missing = (HashMap<String, Integer>) sortByComparator(missing, false);
@@ -197,6 +201,7 @@ public class ReadFile {
 
         String temp = "";
         boolean addChar = false;
+        
 
         for (int i = 0; i < link.length(); i++) {
 
@@ -212,10 +217,15 @@ public class ReadFile {
             }
 
             if (addChar) {
-                if (link.charAt(i) != '[' && link.charAt(i) != ' ' && link.charAt(i) != '_') {
+                if (link.charAt(i) != '[' ) {
                     temp += link.charAt(i);
-                }
+                }else if(link.charAt(i) == '_'){
+                    temp += ' ';
+                }else{
+                    
+                }                
             }
+            
         }
     }
     
@@ -295,11 +305,11 @@ public class ReadFile {
 //    }
 
     public static boolean validLink(String link) {
-        return !wikiLink(link) && !picLink(link) && !pojLink(link) && !commonsLink(link) && !webLink(link) && !catLink(link) && !fileLink(link) && !wdataLink(link) && !templateLink(link) && !languishLink(link) && link != null && !link.isEmpty();
+        return !wikiLink(link) && !colonLink(link) && !specialLink(link) && !picLink(link) && !pojLink(link) && !containsHashtag(link) && !commonsLink(link) && !webLink(link) && !catLink(link) && !fileLink(link) && !wdataLink(link) && !templateLink(link) && !languishLink(link) && link != null && !link.isEmpty();
     }
 
     public static boolean picLink(String link) {
-        return link.startsWith("bild:");
+        return (link.startsWith("bild:")||link.startsWith("image:"));
     }
 
     public static boolean webLink(String link) {
@@ -307,7 +317,7 @@ public class ReadFile {
     }
 
     public static boolean catLink(String link) {
-        return link.startsWith("kategori:");
+        return (link.startsWith(":kategori") || link.startsWith("kategori:"));
     }
     
     public static boolean fileLink(String link) {
@@ -323,7 +333,7 @@ public class ReadFile {
     }
     
     public static boolean languishLink(String link) {
-        return (link.startsWith(":en")||link.startsWith(":de"));
+        return (link.startsWith("en:")||link.startsWith(":en")||link.startsWith("de:")||link.startsWith(":de")||link.startsWith("pl:"));
     }
     
     public static boolean wikiLink(String link) {
@@ -331,11 +341,23 @@ public class ReadFile {
     }
     
     public static boolean commonsLink(String link) {
-        return (link.startsWith("commons:"));
+        return (link.startsWith("commons:")||link.startsWith("commons:"));
     }
+    
+    public static boolean colonLink(String link) {
+        return (link.startsWith(":"));
+    } 
     
     public static boolean pojLink(String link) {
         return (link.startsWith("project:"));
+    }
+    
+    public static boolean specialLink(String link) {
+        return (link.startsWith("special:"));
+    }
+    
+    public static boolean containsHashtag(String link) {
+        return (link.contains("#"));
     }
 
 //http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
