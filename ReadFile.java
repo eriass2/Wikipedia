@@ -9,10 +9,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 public class ReadFile {
 
-    public static HashMap<String, Integer> articles = new HashMap<>();
+    /**
+     *
+     */
+    public static TreeSet<String> articles = new TreeSet<>();
     public static HashMap<String, Integer> missing = new HashMap<>();
 
     /**
@@ -23,24 +27,24 @@ public class ReadFile {
         //Gui med fil väljare
         //Progression feedback
         //String som samma objekt, cool grej som kan lösa minne problemt
-        //readArticle("m�laren.txt",34);
-        getArticles("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
-        readArticle("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml", 0x5f5e100);
+        getArticles("D:enwiki-latest-pages-meta-current.xml");
+        readArticle("D:enwiki-latest-pages-meta-current.xml", 0x5f5e100);
+        //getArticles("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
+        //readArticle("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml", 0x5f5e100);
         saveListToFile();
-       // readArticle2();
+        //readArticle2();
 
         //saveListToFile(links);
     }
 
     public static void linkMissing(String link) {
 
-        if (!articles.containsKey(link)) {
+        if (!articles.contains(link)) {
             if (missing.containsKey(link)) {
                 int g = missing.get(link);
                 missing.replace(link, g, g + 1);
             } else {
                 missing.put(link, 1);
-                //System.out.println(link);
             }
         }
 
@@ -56,11 +60,15 @@ public class ReadFile {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"))) {
                 String strLine;
                 boolean artikelrymden = false;
-
+                
                 //Read File Line By Line
                 while ((strLine = br.readLine()) != null && currentRow < stopAtRow) {
-                    strLine = strLine;//.replaceAll("\\s+", "");
-                    String temp = strLine;
+                    String temp;
+                    if (strLine.length() > 0 && strLine.charAt(strLine.length() - 1) == ' ') {
+                        temp = strLine.substring(0, strLine.length() - 1);
+                    }else{
+                        temp = strLine;
+                    }
                     
                     if (strLine.startsWith("    <title>")) {                        
                         strLine = br.readLine().replaceAll("\\s+", "");
@@ -74,10 +82,10 @@ public class ReadFile {
                             fetchLinks(temp.toLowerCase());
                         }
 
-                        currentRow++;
-                        if (currentRow % 100000 == 0) {
-                            System.out.println(currentRow / 100000 + " " + strLine);
-                        }
+//                        currentRow++;
+//                        if (currentRow % 100000 == 0) {
+//                            System.out.println(currentRow / 100000 + " " + strLine);
+//                        }
                     }
 
                 }
@@ -101,15 +109,17 @@ public class ReadFile {
         String tempRow = "";
         String strLine = "";
         double currentRow = 0;
+        double articalAdded = 0;
+        int oneHundredK =0;
 
         try {
             // Open file
             FileInputStream fstream = new FileInputStream(path);
             //Read File Line By Line
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"),20000)) {
                 //Read File Line By Line
                 while ((strLine = br.readLine()) != null) {
-                    strLine = strLine;
+                    
                     //Check if line contains name of article (<title>)
                     if (strLine.startsWith("    <title>")) {
                         tempRow = strLine;
@@ -120,18 +130,17 @@ public class ReadFile {
                             tempRow = tempRow.replace("    <title>", "");
                             tempRow = tempRow.replace("</title>", "");
 
-                            tempRow = tempRow.replace('_', ' ');
-
-                            articles.put(tempRow.toLowerCase(), 1);
-//                           System.out.println(tempRow);
-//                            Thread.sleep(1000);
-
+                            tempRow = tempRow.replace('_', ' ');                            
+                            articles.add(tempRow.toLowerCase());
+                            articalAdded++;
                         }
                     }
-                    currentRow++;
-                    if (currentRow % 100000 == 0) {
-                        System.out.println(currentRow / 100000 + " " + strLine);
-                    }
+//                    oneHundredK++;
+//                    if (oneHundredK == 100000) {
+//                        oneHundredK = 0;
+//                        currentRow+=100000;
+//                        System.out.println(currentRow / 100000 + " " + articalAdded );
+//                    }
                 }
                 //Close the input stream
             }
@@ -169,17 +178,17 @@ public class ReadFile {
                     fileExists = false;
 
                     theFile.createNewFile();
+                    int articlesSize = articles.size();
                     articles.clear();
                     FileWriter fw = new FileWriter(theFile.getAbsoluteFile());
                     try (BufferedWriter bw = new BufferedWriter(fw)) {
                         missing = (HashMap<String, Integer>) sortByComparator(missing, false);
                         Iterator it = missing.entrySet().iterator();
-                        bw.write("Antal hittade artiklar :" + articles.size() + "\n Antal saknade artiklar :" + missing.size() + "\r\n");
+                        bw.write("Antal hittade artiklar :" + articlesSize + "\n Antal saknade artiklar :" + missing.size() + "\r\n");
                         int i = 0;
                         while (it.hasNext()&& i<=1000) {
                             Map.Entry pair = (Map.Entry) it.next();
-                            String text = ("|[[" + pair.getKey() + "]] \r\n |" + pair.getValue());
-                            bw.write("|- \r\n");
+                            String text = ("#[[" + pair.getKey() + "]] :" + pair.getValue());                            
                             bw.write(text + "\r\n");
                             it.remove();
                             i++;
@@ -217,147 +226,109 @@ public class ReadFile {
             }
 
             if (addChar) {
-                if (link.charAt(i) != '[' ) {
+                if (link.charAt(i) != '[' && link.charAt(i) != '_') {
                     temp += link.charAt(i);
                 }else if(link.charAt(i) == '_'){
                     temp += ' ';
-                }else{
-                    
-                }                
+                }               
             }
             
         }
     }
     
-//     public static void readArticle2() {
-//
-//        double currentRow = 0;
-//        double target = 1000;
-//        ArrayList<String> articles2 = new ArrayList<>();
-//
-//        try {
-//            // Open file
-//            FileInputStream fstream = new FileInputStream("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
-//            try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"))) {
-//                String strLine = null;
-//                
-//                //Read File Line By Line
-//               
-//                while(currentRow < target){
-//                    
-//                    
-//                        articles2.add(br.readLine());
-//                    
-//                    currentRow++;
-//                    if (currentRow % 100000 == 0) {
-//                        System.out.println(currentRow / 100000 + " " + strLine);
-//                    }
-//                }
-//            }
-//                
-//                //Close the input stream
-//            
-//
-//        } catch (FileNotFoundException e) {
-//            System.err.println("File is very missing.");
-//            System.exit(0);
-//        } catch (IOException e) {
-//            System.err.println("File is very error.");
-//            System.exit(0);
-//        }
-//
-//        int fileVersion = 0;
-//        boolean fileExists = true;
-//
-//        try {
-//
-//            File theFile;
-//
-//            // if file doesnt exists, then create it
-//            while (fileExists) {
-//
-//                theFile = new File("newList" + fileVersion + ".txt");
-//
-//                if (theFile.exists()) {
-//                    fileVersion++;
-//                } else {
-//
-//                    fileExists = false;
-//
-//                    theFile.createNewFile();
-//
-//                    FileWriter fw = new FileWriter(theFile.getAbsoluteFile());
-//                    try (BufferedWriter bw = new BufferedWriter(fw)) {
-//                        for (String s : articles2) {
-//                            bw.write(s + "\r\n");
-//                        }
-//                    }
-//
-//                    System.out.println("File saved.");
-//
-//                }
-//            }
-//
-//        } catch (IOException e) {
-//            System.err.println("Save is very error.");
-//        }
-//
-//    }
+     public static void sampelCreater() {
+
+        double currentRow = 0;
+        double target = 100000;
+        ArrayList<String> articles2 = new ArrayList<>();
+
+         try {
+             // Open file
+             FileInputStream fstream = new FileInputStream("D:enwiki-latest-pages-meta-current.xml");
+             try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"))) {
+                 String strLine = null;
+
+                //Read File Line By Line
+                 while (currentRow < target) {
+
+                     articles2.add(br.readLine());
+
+                     currentRow++;
+                     if (currentRow % 100000 == 0) {
+                         System.out.println(currentRow / 100000 + " " + strLine);
+                     }
+                 }
+             }
+                
+                //Close the input stream
+            
+
+        } catch (FileNotFoundException e) {
+            System.err.println("File is very missing.");
+            System.exit(0);
+        } catch (IOException e) {
+            System.err.println("File is very error.");
+            System.exit(0);
+        }
+
+        int fileVersion = 0;
+        boolean fileExists = true;
+
+        try {
+
+            File theFile;
+
+            // if file doesnt exists, then create it
+            while (fileExists) {
+
+                theFile = new File("newList" + fileVersion + ".txt");
+
+                if (theFile.exists()) {
+                    fileVersion++;
+                } else {
+
+                    fileExists = false;
+
+                    theFile.createNewFile();
+
+                    FileWriter fw = new FileWriter(theFile.getAbsoluteFile());
+                    try (BufferedWriter bw = new BufferedWriter(fw)) {
+                        for (String s : articles2) {
+                            bw.write(s + "\r\n");
+                        }
+                    }
+
+                    System.out.println("File saved.");
+
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Save is very error.");
+        }
+
+    }
 
     public static boolean validLink(String link) {
-        return !wikiLink(link) && !colonLink(link) && !specialLink(link) && !picLink(link) && !pojLink(link) && !containsHashtag(link) && !commonsLink(link) && !webLink(link) && !catLink(link) && !fileLink(link) && !wdataLink(link) && !templateLink(link) && !languishLink(link) && link != null && !link.isEmpty();
+        return !templateLink(link) && !containsHashtag(link) && !languishLink(link) && link != null && !link.isEmpty();
     }
 
-    public static boolean picLink(String link) {
-        return (link.startsWith("bild:")||link.startsWith("image:"));
-    }
 
-    public static boolean webLink(String link) {
-        return link.startsWith("http://");
-    }
-
-    public static boolean catLink(String link) {
-        return (link.startsWith(":kategori") || link.startsWith("kategori:"));
-    }
-    
-    public static boolean fileLink(String link) {
-        return (link.startsWith("fil:")||link.startsWith("file:"));
-    }
-    
-    public static boolean wdataLink(String link) {
-        return (link.startsWith(":d")||link.startsWith("d:"));
-    }
     
     public static boolean templateLink(String link) {
-        return (link.startsWith("mall:"));
+        return (link.startsWith("mall:")||link.contains("{{"));
     }
     
     public static boolean languishLink(String link) {
-        return (link.startsWith("en:")||link.startsWith(":en")||link.startsWith("de:")||link.startsWith(":de")||link.startsWith("pl:"));
-    }
-    
-    public static boolean wikiLink(String link) {
-        return (link.startsWith("wikipedia:")||link.startsWith("wp:"));
-    }
-    
-    public static boolean commonsLink(String link) {
-        return (link.startsWith("commons:")||link.startsWith("commons:"));
+        return (link.contains(":")|| link.contains("\\") ||link.contains("&") || link.contains("''") || link.contains("!") || link.contains("=")); 
     }
     
     public static boolean colonLink(String link) {
         return (link.startsWith(":"));
     } 
     
-    public static boolean pojLink(String link) {
-        return (link.startsWith("project:"));
-    }
-    
-    public static boolean specialLink(String link) {
-        return (link.startsWith("special:"));
-    }
-    
     public static boolean containsHashtag(String link) {
-        return (link.contains("#"));
+        return ((link.contains("#"))||(link.contains("%23")));
     }
 
 //http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
