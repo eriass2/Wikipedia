@@ -38,7 +38,12 @@ public class ReadFile {
     }
 
     public static void linkMissing(String link) {
-
+        if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {
+            link = link.substring(0, link.length() - 1);
+        }
+        if (link.startsWith(" ")) {
+            link = link.substring(1);
+        }
         if (!articles.contains(link)) {
             if (missing.containsKey(link)) {
                 int g = missing.get(link);
@@ -63,13 +68,8 @@ public class ReadFile {
                 
                 //Read File Line By Line
                 while ((strLine = br.readLine()) != null && currentRow < stopAtRow) {
-                    String temp;
-                    if (strLine.length() > 0 && strLine.charAt(strLine.length() - 1) == ' ') {
-                        temp = strLine.substring(0, strLine.length() - 1);
-                    }else{
-                        temp = strLine;
-                    }
-                    
+                    String temp = strLine;
+                                        
                     if (strLine.startsWith("    <title>")) {                        
                         strLine = br.readLine().replaceAll("\\s+", "");
                         artikelrymden = strLine.equals("<ns>0</ns>");
@@ -79,6 +79,7 @@ public class ReadFile {
                         //Check if line contains link
                         if (temp.contains("[[")) //If line contains link, add to list
                         {
+
                             fetchLinks(temp.toLowerCase());
                         }
 
@@ -316,7 +317,7 @@ public class ReadFile {
 
     
     public static boolean templateLink(String link) {
-        return (link.startsWith("mall:")||link.contains("{{"));
+        return (link.startsWith("mall:")||link.equals(" ")||link.contains("{{"));
     }
     
     public static boolean languishLink(String link) {
