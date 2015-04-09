@@ -38,14 +38,14 @@ public class ReadFile {
     }
 
     /**
-     * Takes a link and cheks if it alredy exists in artical outerwise it is deamd missing and chekd
-     * if it exits in missing therafter added to missing and plus one.
+     * Takes a link and checks if it already exists in article, otherwise it is deemed missing and checked
+     * if it exits in missing thereafter added to missing and plus one.
      */
     public static void linkMissing(String link) {
-        if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {//Removes last emty space.
+        if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {//Removes last empty space.
             link = link.substring(0, link.length() - 1);
         }
-        if (link.startsWith(" ")) {//Removes first emty space
+        if (link.startsWith(" ")) {//Removes first empty space
             link = link.substring(1);
         }
         if (!articles.contains(link)) {
@@ -60,7 +60,7 @@ public class ReadFile {
     }
 
     /**
-     * Reads the target file to find links inside the articals, theat then is sent to be verifid by fetchLinks()
+     * Reads the target file to find links inside the articles, which then is sent to be verified by fetchLinks()
      */
 
     public static void readArticle(String path, double stopAtRow) {
@@ -72,7 +72,7 @@ public class ReadFile {
             FileInputStream fstream = new FileInputStream(path);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"))) {
                 String strLine;
-                boolean artikelrymden = false;
+                boolean nameSpace = false;
                 
                 //Read File Line By Line
                 while ((strLine = br.readLine()) != null && currentRow < stopAtRow) {
@@ -80,10 +80,10 @@ public class ReadFile {
                                         
                     if (strLine.startsWith("    <title>")) {                        
                         strLine = br.readLine().replaceAll("\\s+", "");
-                        artikelrymden = strLine.equals("<ns>0</ns>");
+                        nameSpace = strLine.equals("<ns>0</ns>");
                     }
 
-                    if (artikelrymden) {
+                    if (nameSpace) {
                         //Check if line contains link
                         if (temp.contains("[[")) //If line contains link, add to list
                         {
@@ -142,8 +142,11 @@ public class ReadFile {
                         if (strLine.equals("<ns>0</ns>")) {
                             tempRow = tempRow.replace("    <title>", "");
                             tempRow = tempRow.replace("</title>", "");
-
-                            tempRow = tempRow.replace('_', ' ');                            
+							
+							//Replace underscore with blank space
+                            tempRow = tempRow.replace('_', ' ');
+							
+							//Changes article names to only contain lower case letters
                             articles.add(tempRow.toLowerCase());
                             articalAdded++;
                         }
@@ -166,7 +169,7 @@ public class ReadFile {
             System.exit(0);
         }
 
-        System.out.println("Antal hittade artiklar :" + articles.size() + "\n Antal rader lästa :" + currentRow);//Messege of amount of articals in namspace
+        System.out.println("Articles found:" + articles.size() + "\n Scanned rows :" + currentRow);//Messege of amount of articals in namspace
         Thread.sleep(30000);
     }
 
@@ -200,7 +203,7 @@ public class ReadFile {
                     try (BufferedWriter bw = new BufferedWriter(fw)) {
                         missing = (HashMap<String, Integer>) sortByComparator(missing, false);
                         Iterator it = missing.entrySet().iterator();
-                        bw.write("Antal hittade artiklar :" + articlesSize + "\n Antal saknade artiklar :" + missing.size() + "\r\n");
+                        bw.write("Articles found :" + articlesSize + "\n Missing articles :" + missing.size() + "\r\n");
                         int i = 0;
                         while (it.hasNext()&& i<=1000) {
                             Map.Entry pair = (Map.Entry) it.next();
