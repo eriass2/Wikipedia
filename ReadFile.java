@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
+import java.util.Scanner;
 
 public class ReadFile {
 
@@ -24,13 +25,8 @@ public class ReadFile {
      * @throws java.lang.InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-        //Gui med fil väljare
-        //Progression feedback
-        //String som samma objekt, cool grej som kan lösa minne problemt
         getArticles("D:enwiki-latest-pages-meta-current.xml");
         readArticle("D:enwiki-latest-pages-meta-current.xml", 0x5f5e100);
-        //getArticles("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml");
-        //readArticle("G:Google Drive/Wikipedia/wikipedia-master/svwiki-latest-pages-meta-current.xml", 0x5f5e100);
         saveListToFile();
         //readArticle2();
 
@@ -39,7 +35,7 @@ public class ReadFile {
 
     /**
      * Takes a link and checks if it already exists in article, otherwise it is deemed missing and checked
-     * if it exits in missing thereafter added to missing and plus one.
+     * if it exists in list "missing" thereafter added to list "missing" and amount increased by 1.
      */
     public static void linkMissing(String link) {
         if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {//Removes last empty space.
@@ -60,12 +56,10 @@ public class ReadFile {
     }
 
     /**
-     * Reads the target file to find links inside the articles, which then is sent to be verified by fetchLinks()
+     * Reads the target file to find links inside the articles, which are then sent to be verified by fetchLinks()
      */
 
     public static void readArticle(String path, double stopAtRow) {
-
-        double currentRow = 0;
 
         try {
             // Open file
@@ -91,10 +85,6 @@ public class ReadFile {
                             fetchLinks(temp.toLowerCase());
                         }
 
-//                        currentRow++;
-//                        if (currentRow % 100000 == 0) {
-//                            System.out.println(currentRow / 100000 + " " + strLine);
-//                        }
                     }
 
                 }
@@ -113,7 +103,7 @@ public class ReadFile {
 
 
     /**
-    * Makes an inetial sertch of the file takeing the titel of artikals in the namespace and adds them to articals.
+    * Makes an initial search of the file, saving the title of articles in the correct namespace and adds them to list "articles".
     *
     */    
 
@@ -151,12 +141,6 @@ public class ReadFile {
                             articalAdded++;
                         }
                     }
-//                    oneHundredK++;
-//                    if (oneHundredK == 100000) {
-//                        oneHundredK = 0;
-//                        currentRow+=100000;
-//                        System.out.println(currentRow / 100000 + " " + articalAdded );
-//                    }
                 }
                 //Close the input stream
             }
@@ -169,12 +153,12 @@ public class ReadFile {
             System.exit(0);
         }
 
-        System.out.println("Articles found:" + articles.size() + "\n Scanned rows :" + currentRow);//Messege of amount of articals in namspace
+        System.out.println("Articles found:" + articles.size() + "\n Scanned rows :" + currentRow);	//Message of amount of articles in namespace
         Thread.sleep(30000);
     }
 
     /*
-    *
+    * Saves sorted list of wikityped text to file
     */
     public static void saveListToFile() {
 
@@ -185,7 +169,7 @@ public class ReadFile {
 
             File theFile;
 
-            // if file doesnt exists, then create it
+            // if file doesn't exist, then create it
             while (fileExists) {
 
                 theFile = new File("newList" + fileVersion + ".txt");
@@ -226,13 +210,19 @@ public class ReadFile {
     }
 
         /*
-    *Validateds links
+    *Validates links
     */
 
     public static void fetchLinks(String link) {
-
+		
+		Scanner scan = new Scanner(System.in);
+		
         String temp = "";
         boolean addChar = false;
+		System.out.println("Select language: ");
+		String lang = scan.nextLine();
+		
+		ValidLinks vd = new ValidLinks(lang);
         
 
         for (int i = 0; i < link.length(); i++) {
@@ -242,7 +232,7 @@ public class ReadFile {
             } else if (link.charAt(i) == ']' || link.charAt(i) == '|') {
                 addChar = false;
 
-                if (validLink(temp)) {
+                if (vd.checkLink(temp)) {
                     linkMissing(temp);
                 }
                 temp = "";
@@ -258,8 +248,10 @@ public class ReadFile {
             
         }
     }
-    
-     public static void sampelCreater() {
+    /**
+	*Creates a short copy of source file for debug.
+	*/
+     public static void sampleCreator() {
 
         double currentRow = 0;
         double target = 100000;
@@ -301,7 +293,7 @@ public class ReadFile {
 
             File theFile;
 
-            // if file doesnt exists, then create it
+            // if file doesn't exists, then create it
             while (fileExists) {
 
                 theFile = new File("newList" + fileVersion + ".txt");
