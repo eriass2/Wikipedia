@@ -37,11 +37,15 @@ public class ReadFile {
         //saveListToFile(links);
     }
 
+    /**
+     * Takes a link and cheks if it alredy exists in artical outerwise it is deamd missing and chekd
+     * if it exits in missing therafter added to missing and plus one.
+     */
     public static void linkMissing(String link) {
-        if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {
+        if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {//Removes last emty space.
             link = link.substring(0, link.length() - 1);
         }
-        if (link.startsWith(" ")) {
+        if (link.startsWith(" ")) {//Removes first emty space
             link = link.substring(1);
         }
         if (!articles.contains(link)) {
@@ -54,6 +58,10 @@ public class ReadFile {
         }
 
     }
+
+    /**
+     * Reads the target file to find links inside the articals, theat then is sent to be verifid by fetchLinks()
+     */
 
     public static void readArticle(String path, double stopAtRow) {
 
@@ -103,10 +111,14 @@ public class ReadFile {
 
     }
 
+
+    /**
+    * Makes an inetial sertch of the file takeing the titel of artikals in the namespace and adds them to articals.
+    *
+    */    
+
     public static void getArticles(String path) throws InterruptedException {
-//läs artikel
-        //http
-        //
+
         String tempRow = "";
         String strLine = "";
         double currentRow = 0;
@@ -154,10 +166,13 @@ public class ReadFile {
             System.exit(0);
         }
 
-        System.out.println("Antal hittade artiklar :" + articles.size() + "\n Antal rader lästa :" + currentRow);
+        System.out.println("Antal hittade artiklar :" + articles.size() + "\n Antal rader lästa :" + currentRow);//Messege of amount of articals in namspace
         Thread.sleep(30000);
     }
 
+    /*
+    *
+    */
     public static void saveListToFile() {
 
         int fileVersion = 0;
@@ -206,6 +221,10 @@ public class ReadFile {
         }
 
     }
+
+        /*
+    *Validateds links
+    */
 
     public static void fetchLinks(String link) {
 
