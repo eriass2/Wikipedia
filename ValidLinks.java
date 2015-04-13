@@ -1,31 +1,59 @@
+package wikipedia;
+
+import java.util.NoSuchElementException;
+
 public class ValidLinks {
 
-	String user, userD, template, templateD;
+	String user, userT, template, templateT, category, image, file, special, wikipediaT, project, module, help;
 
-	public ValidLinks(String L){
+    /**
+     *
+     * @param L
+     */
+    public ValidLinks(String L){
 		switch(L){
 			case "sv":
-				user = "Användare";
-				userD = "Användare Diskussion";
+				user = "användare:";
+				userT = "användare diskussion:";
 				template = "mall:";
-				templateD = "Mall Diskussion:";
+				templateT = "mall diskussion:";
+                                category = "kategori:";
 			break;
-			case "en":
-				user = "User";
-				userD = "User Discussion";
+			case "en":                                
+                                special = "special:";
+				user = "user:";
+				userT = "user talk:";
 				template = "template:";
-				templateD = "Template Discussion:";
+				templateT = "template talk:";
+                                category = "category:";
+                                image = "image:";
+                                file = "file:";                                
+                                wikipediaT = "wikipedia talk:";
+                                project = "project:";
+                                module = "module:";
+                                help = "help:";
 			break;
-			case default:
-				throw NoSuchElementException("No such language exists.");
-			break;
+			default:
+				throw new NoSuchElementException("No such language exists.");
+			
 		}
 		//Switch
 		
 	}
 
-	public boolean checkLink(String link){
-		return (link.startsWith(teamplate)||link.startsWith(teamplateD)||link.equals(" ")||link.contains("{{"));
-	}
+    public boolean checkLink(String link) {
+        if(link.equals(""))
+            return false;
+        
+        if ((link.contains("#")) || (link.contains("%23")) || (link.contains("//")) || (link.contains("{{")) || (link.equals(" ")) || (link.startsWith("[[")) || (link.startsWith(":"))|| (link.startsWith("\\b"))) {
+            return false;
+        } else if ((link.startsWith("commons:"))||(link.startsWith("c:"))|| (link.startsWith("wp:")) || (link.startsWith("wikipedia:"))|| (link.startsWith("wiktionary:")) || (link.startsWith("wikt:"))) {
+            return false;
+        } else if ((link.startsWith("en:"))||(link.startsWith("d:"))||(link.startsWith("w:"))||(link.startsWith("s:"))) {
+            return false;
+        } else {
+            return !(link.startsWith(template) || link.startsWith(templateT) || link.startsWith(user) || link.startsWith(userT) || link.startsWith(category) || link.startsWith(image) || link.startsWith(file)|| link.startsWith(special)|| link.startsWith(wikipediaT)|| link.startsWith(module)|| link.startsWith(help));
+        }
+    }
 
 }
