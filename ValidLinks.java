@@ -1,43 +1,20 @@
-package wikipedia;
-
 import java.util.NoSuchElementException;
 
 public class ValidLinks {
 
-	String user, userT, template, templateT, category, image, file, special, wikipediaT, project, module, help;
-
+	//private String user, userT, template, templateT, category, image, file, special, wikipediaT, project, module, help;
+	
+	private String lang;
+	private String[] namespaces_sv = {"diskussion", "anv‰ndare", "anv‰ndardiskussion","wikipedia", "wikipediadiskussion", "fil", "fildiskussion", "mediawiki", "mediawiki-diskussion", "mall", "malldiskussion", "hj‰lp", "hj‰lpdiskussion", "kategori", "kategoridiskussion","portal", "portaldiskussion", "utbildningsprogram","utbildningsprogramsdiskussion", "modul", "moduldiskussion", "special", "media"};
+	private String[] namespaces_en = {"talk", "user", "user talk", "wikipedia", "wikipedia", "file", "file talk", "mediawiki", "mediawiki talk","template", "template talk", "help", "help talk", "category", "category talk", "portal", "portal talk", "book", "book talk", "draft", "draft talk", "education program", "education program talk", "timedtext", "timedtext talk", "module", "module talk", "topic", "special", "media"};
+	
+	
     /**
      *
      * @param L
      */
     public ValidLinks(String L){
-		switch(L){
-			case "sv":
-				user = "anv√§ndare:";
-				userT = "anv√§ndare diskussion:";
-				template = "mall:";
-				templateT = "mall diskussion:";
-                                category = "kategori:";
-			break;
-			case "en":                                
-                                special = "special:";
-				user = "user:";
-				userT = "user talk:";
-				template = "template:";
-				templateT = "template talk:";
-                                category = "category:";
-                                image = "image:";
-                                file = "file:";                                
-                                wikipediaT = "wikipedia talk:";
-                                project = "project:";
-                                module = "module:";
-                                help = "help:";
-			break;
-			default:
-				throw new NoSuchElementException("No such language exists.");
-			
-		}
-		//Switch
+		lang = L;
 		
 	}
 
@@ -52,8 +29,32 @@ public class ValidLinks {
         } else if ((link.startsWith("en:"))||(link.startsWith("d:"))||(link.startsWith("w:"))||(link.startsWith("s:"))) {
             return false;
         } else {
-            return !(link.startsWith(template) || link.startsWith(templateT) || link.startsWith(user) || link.startsWith(userT) || link.startsWith(category) || link.startsWith(image) || link.startsWith(file)|| link.startsWith(special)|| link.startsWith(wikipediaT)|| link.startsWith(module)|| link.startsWith(help));
+        	
+        	switch(lang){
+			case "sv":
+				
+				for(int i = 0; i<namespaces_sv.length;i++){
+					if(link.startsWith(namespaces_sv[i]+":")){
+						return false;
+					}
+				}
+				
+			break;
+			case "en":                                
+				
+				for(int i = 0; i<namespaces_en.length;i++){
+					if(link.startsWith(namespaces_en[i]+":")){
+						return false;
+					}
+				}
+				
+			break;
+			default:
+				throw new NoSuchElementException("Language not supported.");
+			
+        	}
+		//Switch
         }
+        return true;
     }
-
 }
