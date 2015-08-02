@@ -5,3 +5,6 @@ wiki/nbproject/project.xml
 wiki/build.xml
 wiki/nbproject/build-impl.xml
 wiki/src/wiki/Wiki.java
+/bin/
+
+*.project
