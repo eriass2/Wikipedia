@@ -34,7 +34,7 @@ public class Sax  extends DefaultHandler{
 			SAXParser sp = spf.newSAXParser();
 			
 			//parse the file and also register this class for call backs
-			sp.parse("exempel/employees.xml", this);
+			sp.parse("C:/Users/jacob_000/Google Drive/wiki/wikipedia-master/svwiki-latest-pages-meta-current.xml", this);
 			
 		}catch(SAXException se) {
 			se.printStackTrace();
@@ -54,10 +54,31 @@ public class Sax  extends DefaultHandler{
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		//reset
 		tempVal = "";
-		if(qName.equalsIgnoreCase("Employee")) {
+		//if(qName.equalsIgnoreCase("title")) {
 			//create a new instance of employee
-			System.out.println(qName);
-		}
+			
+			for(int i = 0; i<attributes.getLength(); i++){
+				if(attributes.getQName(i).equalsIgnoreCase("title")){
+					System.out.println(attributes.getValue(i));
+				}
+				
+				// System.out.println(attributes.getQName(i) + "q");
+				// System.out.println(attributes.getValue(i) + "v");
+				// System.out.println(attributes.getURI(i) + "u");
+				// System.out.println(attributes.getLocalName(i) + "l");
+				
+			}
+		//}
+	}
+	
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		tempVal = new String(ch,start,length);
+	}
+	
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+
+		
+		
 	}
 	
 	public static void main(String[] args){
