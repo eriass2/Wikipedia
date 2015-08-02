@@ -26,6 +26,7 @@ public class Sax  extends DefaultHandler{
 	private Connection c = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
+	private String tempStr;
 
 
 
@@ -89,6 +90,7 @@ public class Sax  extends DefaultHandler{
 
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		tempVal = new String(ch,start,length);
+		tempStr+=tempVal;
 	}
 
 	public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -105,7 +107,7 @@ public class Sax  extends DefaultHandler{
 			}
 		}
 		if(qName.equalsIgnoreCase("text")){
-			String link = tempVal;
+			String link = tempStr;
 
 			String temp = "";
 			boolean addChar = false;
@@ -118,7 +120,7 @@ public class Sax  extends DefaultHandler{
 				} else if (link.charAt(j) == ']' || link.charAt(j) == '|') {
 					addChar = false;
 
-					if (vd.checkLink(temp)) {
+					if (vd.checkLink(temp.toLowerCase())) {
 						addLinkInDB(temp);
 					}
 					temp = "";
