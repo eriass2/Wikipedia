@@ -13,8 +13,7 @@ public class XMLReader {
 	public ArrayList<String> getArticles(String path) throws InterruptedException {
 		
         String tempRow = "";
-        String strLine = "";
-        double currentRow = 0;
+        int currentRow = 0;
 
         try {
             // Open file
@@ -22,25 +21,8 @@ public class XMLReader {
             //Read File Line By Line
             try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"), 10000)) {	//Kolla upp vad denna buffert g�r
                 //Read File Line By Line
-                while ((strLine = br.readLine()) != null) {
-                    
-                    //Check if line contains name of article (<title>)
-                    if (strLine.startsWith("    <title>")) {
-                        tempRow = strLine;
-
-                        strLine = br.readLine().replaceAll("\\s+", "");
-
-                        if (strLine.equals("<ns>0</ns>")) {
-                            tempRow = tempRow.replace("    <title>", "");
-                            tempRow = tempRow.replace("</title>", "");
-							
-							//Replace underscore with blank space
-                            tempRow = tempRow.replace('_', ' ');
-							
-							//Changes article names to only contain lower case letters
-                            finalSet.add(tempRow.toLowerCase());
-                        }
-                    }
+                while ((tempRow = br.readLine()) != null && currentRow < 10000) {
+                	finalSet.add(tempRow);
                     currentRow++;
                 }
                 //Close the input stream
@@ -55,7 +37,7 @@ public class XMLReader {
         }
         
         
-        RedLink.area.append("Articles found:" + RedLink.articles.size() + "\n Scanned rows :" + currentRow);	//Message of amount of articles in namespace
+        RedLink.area.append("Scanned rows :" + currentRow + "\n");	//Message
         return finalSet;
     }
 

@@ -11,6 +11,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 import static javax.swing.JOptionPane.*;
 
@@ -21,7 +23,7 @@ public class RedLink extends JFrame {
 	private File theFile;
 	private JButton chooseBtn, saveBtn, runBtn;
 	private JComboBox<String> caseCh, langCh;
-	private String[] caseLabels = {"","Test", "First 10000 rows", "Find red links"};		//Note: If adding or removing cases, you must manually change the switch in RunListener to match them.
+	private String[] caseLabels = {"","Test", "First 10000 rows", "Find red links", "SAX"};		//Note: If adding or removing cases, you must manually change the switch in RunListener to match them.
 	private String[] langLabels = {"","English", "Swedish"};
 	private String[] languages = {"en", "sv"};
 	private JTextField pathField, savePathField;
@@ -32,7 +34,7 @@ public class RedLink extends JFrame {
 	public static TreeSet<String> articles = new TreeSet<>();
 
 	public RedLink() {
-		super("RedLink District 1.5");
+		super("RedLink District 1.5.1");
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -204,7 +206,7 @@ public class RedLink extends JFrame {
 	
 	public class ExitListener extends WindowAdapter {
 		public void windowClosing(WindowEvent we) {
-			if (showConfirmDialog(RedLink.this, "Really?", "Message",
+			if (showConfirmDialog(RedLink.this, "Exit? Really?!", "Message",
 					YES_NO_OPTION) == YES_OPTION) {
 				System.exit(0);
 			} else {
@@ -256,6 +258,17 @@ public class RedLink extends JFrame {
 		break;
 		
 		case 4:
+			SaxPrompt sp = new SaxPrompt();
+			if(showConfirmDialog(RedLink.this, sp, "Login to database",OK_CANCEL_OPTION)== OK_OPTION){
+				Sax sxml = new Sax();
+				String temp = "";
+				for(int i=0; i<sp.getPass().length;i++){
+					temp+=sp.getPass()[i];
+					sp.getPass()[i] = '0';
+				}
+				print(sxml.getArticles(filePath,sp.getUser(),temp));
+			}
+			
 		break;
 		
 		case 5:
@@ -332,6 +345,7 @@ public class RedLink extends JFrame {
 	}
 	
 	public static void main(String[] args) {
+		
 		new RedLink();
 	}
 }
