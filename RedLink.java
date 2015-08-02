@@ -32,13 +32,32 @@ public class RedLink extends JFrame {
 	private ArrayList<String> testSet = new ArrayList<String>();
 	public static JTextArea area;
 	public static TreeSet<String> articles = new TreeSet<>();
+	
+	/*TESTMENY, TA BORT INNAN RELEASE! */
+	private JMenuBar mm;
+	private JMenu test;
+	private JMenuItem runSAX;
+	
+	/*TESTMENY SLUT, TA BORT INNAN RELEASE! */
 
 	public RedLink() {
-		super("RedLink District 1.5.1");
-
+		super("RedLink District 1.5.2");
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {}
+		
+		/*TESTMENY, TA BORT INNAN RELEASE! */
+		mm = new JMenuBar();
+		mm.add(test = new JMenu("Test"));
+		test.add(runSAX = new JMenuItem("Run SAX TEST"));
+		runSAX.addActionListener(new SAXTest());
+		setJMenuBar(mm);
+		
+		/*TESTMENY SLUT, TA BORT INNAN RELEASE! */
+		
+
+		
 		
 		
 		populate();
@@ -266,7 +285,7 @@ public class RedLink extends JFrame {
 					temp+=sp.getPass()[i];
 					sp.getPass()[i] = '0';
 				}
-				print(sxml.getArticles(filePath,sp.getUser(),temp));
+				print(sxml.getArticles(filePath,sp.getUser(),temp, languages[langVal]));
 			}
 			
 		break;
@@ -325,7 +344,7 @@ public class RedLink extends JFrame {
 	        
 	}
 	
-//	Test method that fills TreeSet "testSet" with Strings. May be removed.
+//	Test methods. May be removed.
 	
 	public void populate(){
 		if(testSet.isEmpty()){
@@ -334,6 +353,15 @@ public class RedLink extends JFrame {
 			testSet.add("Meloner");
 			testSet.add("Gurka");
 			testSet.add("Fetaost & oliver");
+		}
+	}
+	
+	public class SAXTest implements ActionListener{
+		public void actionPerformed(ActionEvent eve){
+				Sax sxml = new Sax();
+				
+				sxml.getArticles("path", "postgres", "1", languages[1]);
+			
 		}
 	}
 	
