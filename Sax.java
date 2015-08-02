@@ -36,7 +36,7 @@ public class Sax  extends DefaultHandler{
 		doDBConnection(u,p);
 		XMLpath = path;
 		parseDocument();
-		finalSet = new ArrayList<String>(articles);
+		
 		
 		try{
 			c.close();
@@ -182,6 +182,39 @@ public class Sax  extends DefaultHandler{
 			}
 			
 		}catch(Exception e){}
+	}
+	
+	
+	public void findMissingArticles(){
+		try{
+		stmt = c.createStatement();
+		rs = stmt.executeQuery("SELECT * FROM Wikilinks ORDER BY 'Occurrence' ASC");
+		
+		while(rs.next()){
+			stmt.executeUpdate("INSERT INTO freqlinks VALUES ('" + rs.getString("name") + "', " + rs.getInt("occurrence"));
+		}
+		
+		rs = stmt.executeQuery("SELECT * FROM freqlinks WHERE 'name' NOT IN (SELECT 'name' FROM articles)");
+		
+		finalSet = new ArrayList<String>(articles);
+		
+		while(rs.next()){
+			finalSet.add(rs.getString("name") + "  "  + rs.getInt("occurrence"));
+		}
+		
+		}catch(Exception e){}
+		
+			/*Jämför sen med artikeltabellen och ta bort värden som förekommer i båda
+			
+			SELECT  (SELECT * 
+			FROM    Call
+			WHERE   phone_number NOT IN (SELECT phone_number FROM Phone_book))
+			
+			FROM    Call
+			WHERE   phone_number NOT IN (SELECT phone_number FROM Phone_book)
+			
+			Stoppa värdena som är kvar i en arraylist och skicka till print.
+		*/
 	}
 
 }
