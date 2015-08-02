@@ -76,51 +76,15 @@ public class Sax  extends DefaultHandler{
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		//reset
 		tempVal = "";
+		
+		if(qName.equalsIgnoreCase("title")){
 
-		for(int i = 0; i<attributes.getLength(); i++){
-			if(attributes.getQName(i).equalsIgnoreCase("title")){
-				//articles.add(attributes.getValue(i));
-
-				try{
-					stmt = c.createStatement();
-
-					String sql = "INSERT INTO Wiki VALUES ('" + attributes.getValue(i) +"')";
-					stmt.executeUpdate(sql);
-
-				}catch(Exception e){
-					RedLink.area.append(e + "\n");
-				}
-			}
-			else if(attributes.getQName(i).equalsIgnoreCase("text")){
-				String link = attributes.getValue(i);
-
-				String temp = "";
-				boolean addChar = false;
-				ValidLinks vd = new ValidLinks(lang);
-
-				for (int j = 0; j < link.length(); j++) {
-
-					if (link.charAt(j) == '[') {
-						addChar = true;
-					} else if (link.charAt(j) == ']' || link.charAt(j) == '|') {
-						addChar = false;
-
-						if (vd.checkLink(temp)) {
-							addLinkInDB(temp);
-						}
-						temp = "";
-					}
-
-					if (addChar) {
-						if (link.charAt(j) != '[' && link.charAt(j) != '_') {
-							temp += link.charAt(j);
-						} else if (link.charAt(j) == '_') {
-							temp += ' ';
-						}
-					}
-				}
-			}
 		}
+		
+		if(qName.equalsIgnoreCase("text")){
+
+			}
+	
 	}
 
 	public void characters(char[] ch, int start, int length) throws SAXException {
@@ -129,7 +93,46 @@ public class Sax  extends DefaultHandler{
 
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 
+		if(qName.equalsIgnoreCase("title")){
+			try{
+				stmt = c.createStatement();
 
+				String sql = "INSERT INTO Wiki VALUES ('" + tempVal +"')";
+				stmt.executeUpdate(sql);
+
+			}catch(Exception e){
+				RedLink.area.append(e + "\n");
+			}
+		}
+		if(qName.equalsIgnoreCase("text")){
+			String link = tempVal;
+
+			String temp = "";
+			boolean addChar = false;
+			ValidLinks vd = new ValidLinks(lang);
+
+			for (int j = 0; j < link.length(); j++) {
+
+				if (link.charAt(j) == '[') {
+					addChar = true;
+				} else if (link.charAt(j) == ']' || link.charAt(j) == '|') {
+					addChar = false;
+
+					if (vd.checkLink(temp)) {
+						addLinkInDB(temp);
+					}
+					temp = "";
+				}
+
+				if (addChar) {
+					if (link.charAt(j) != '[' && link.charAt(j) != '_') {
+						temp += link.charAt(j);
+					} else if (link.charAt(j) == '_') {
+						temp += ' ';
+					}
+				}
+			}
+		}
 
 	}
 
