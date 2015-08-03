@@ -158,6 +158,10 @@ public class Sax  extends DefaultHandler{
 	
 	public void addLinkInDB(String link){
 		try{
+			stmt = c.createStatement();
+			stmt.executeUpdate("INSERT INTO Wikilinks VALUES ('" + link + "')");
+			
+			/*
 			//Checks if temp exists in table, and if so, add 1 to it's occurrence value
 			int rows = 0;
 			stmt = c.createStatement();
@@ -180,6 +184,7 @@ public class Sax  extends DefaultHandler{
 				stmt.executeUpdate("UPDATE Wikilinks SET occurrence=" + occ + " WHERE name='" + link +"'");
 				
 			}
+			*/
 			
 		}catch(Exception e){}
 	}
@@ -187,6 +192,14 @@ public class Sax  extends DefaultHandler{
 	
 	public void findMissingArticles(){
 		try{
+			stmt = c.createStatement();
+			rs = stmt.executeQuery("SELECT wikilinks.name, COUNT(name) AS 'occurrence' FROM wikilinks GROUP BY name");
+			
+			while(rs.next()){
+				stmt.executeUpdate("INSERT INTO freqlinks VALUES ('" + rs.getString("name") + "', " + rs.getInt("occurrence"));
+			}
+			
+			/*
 		stmt = c.createStatement();
 		rs = stmt.executeQuery("SELECT * FROM Wikilinks ORDER BY 'Occurrence' ASC");
 		
@@ -201,7 +214,7 @@ public class Sax  extends DefaultHandler{
 		while(rs.next()){
 			finalSet.add(rs.getString("name") + "  "  + rs.getInt("occurrence"));
 		}
-		
+		*/
 		}catch(Exception e){}
 		
 			/*Jämför sen med artikeltabellen och ta bort värden som förekommer i båda
