@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 
 
 public class Sax  extends DefaultHandler{
@@ -23,7 +24,8 @@ public class Sax  extends DefaultHandler{
 	private String lang;
 	private TreeSet<String> articles = new TreeSet<String>();
 	private ArrayList<String> finalSet;
-	private ArrayList<String> linkBatch;
+	private ArrayList<String> articleBatch = new ArrayList<String>();
+	private ArrayList<String> linkBatch = new ArrayList<String>();
 	private Connection c = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
@@ -97,15 +99,9 @@ public class Sax  extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 
 		if(qName.equalsIgnoreCase("title")){
-			try{
-				stmt = c.createStatement();
+			
+			addArticleToBatch(tempVal);
 
-				String sql = "INSERT INTO Wiki VALUES ('" + tempVal +"')";
-				stmt.executeUpdate(sql);
-
-			}catch(Exception e){
-				RedLink.area.append(e + "\n");
-			}
 		}
 		if(qName.equalsIgnoreCase("text")){
 			String link = tempStr;
@@ -122,7 +118,7 @@ public class Sax  extends DefaultHandler{
 					addChar = false;
 
 					if (vd.checkLink(temp.toLowerCase())) {
-						addLinkInDB(temp);
+						addLinkToBatch(temp);
 					}
 					temp = "";
 				}
@@ -157,15 +153,37 @@ public class Sax  extends DefaultHandler{
 		//Fånga PSQLException om man skriver fel lösenord
 	}
 	
+	public void addArticleToBatch(String title){
+		if(articleBatch.size()==100){
+			addArticleBatchInDB();
+		}
+		
+		articleBatch.add("INSERT INTO wiki (name) VALUES ('" + title + "')");
+	}
+	
+	public void addArticleBatchInDB(){
+		try{
+			stmt = c.createStatement();
+					
+			for (String query : articleBatch) {
+				stmt.addBatch(query);
+			}
+			stmt.executeBatch();
+			linkBatch.clear();
+			
+			stmt.close();
+		}catch(Exception e){}
+	}
+	
 	public void addLinkToBatch(String link){
 		if(linkBatch.size()==100){
-			addBatchInDB();
+			addLinkBatchInDB();
 		}
 		
 		linkBatch.add("INSERT INTO wikilinks (name) VALUES ('" + link + "')");
 	}
 	
-	public void addBatchInDB(){
+	public void addLinkBatchInDB(){
 		try{
 			stmt = c.createStatement();
 					
@@ -179,12 +197,13 @@ public class Sax  extends DefaultHandler{
 		}catch(Exception e){}
 	}
 	
+	/*
 	public void addLinkInDB(String link){
 		try{
 			stmt = c.createStatement();
 			stmt.executeUpdate("INSERT INTO Wikilinks VALUES ('" + link + "')");
 			
-			/*
+			
 			//Checks if temp exists in table, and if so, add 1 to it's occurrence value
 			int rows = 0;
 			stmt = c.createStatement();
@@ -207,11 +226,11 @@ public class Sax  extends DefaultHandler{
 				stmt.executeUpdate("UPDATE Wikilinks SET occurrence=" + occ + " WHERE name='" + link +"'");
 				
 			}
-			*/
+			
 			
 		}catch(Exception e){}
 	}
-	
+	*/
 	
 	public void findMissingArticles(){
 		try{
