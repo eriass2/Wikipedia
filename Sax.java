@@ -16,6 +16,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class Sax extends DefaultHandler {
 
@@ -28,10 +29,12 @@ public class Sax extends DefaultHandler {
     private ArrayList<String> linkBatch = new ArrayList<String>();
     private Connection c = null;
     private Statement stmt = null;
+    private PreparedStatement pstmt = null;
+    private PreparedStatement pstmt2 = null;
     private ResultSet rs = null;
     private String tempStr;
     private boolean text = false;
-    private boolean artical = false;
+    private boolean article = false;
 
     public ArrayList<String> getArticles(String path, String u, String p, String l) {
         lang = l;
@@ -40,9 +43,15 @@ public class Sax extends DefaultHandler {
         parseDocument();
 
         try {
-            c.close();
-            stmt.close();
-            rs.close();
+        	if(!c.isClosed()){
+        		c.close();
+        	}
+        	if(!stmt.isClosed()){
+        		stmt.close();
+        	}
+        	if(!rs.isClosed()){
+        		rs.close();
+        	}
         } catch (Exception e) {
         }
 
@@ -80,7 +89,7 @@ public class Sax extends DefaultHandler {
         tempVal = "";
 
         if (qName.equalsIgnoreCase("title")) {
-            artical = true;
+            article = true;
         }
 
         if (qName.equalsIgnoreCase("text")) {
@@ -90,7 +99,7 @@ public class Sax extends DefaultHandler {
     }
 
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (artical || text) {
+        if (article || text) {
             tempVal = new String(ch, start, length);
             if (text) {
                 tempStr += tempVal;
@@ -103,7 +112,7 @@ public class Sax extends DefaultHandler {
         if (qName.equalsIgnoreCase("title")) {
 
             addArticleToBatch(tempVal);
-            artical = false;
+            article = false;
         }
         if (qName.equalsIgnoreCase("text")) {
             text = false;
@@ -157,20 +166,21 @@ public class Sax extends DefaultHandler {
             addArticleBatchInDB();
         }
 
-        articleBatch.add("INSERT INTO wiki (name) VALUES ('" + title + "')");
+        articleBatch.add(title);
     }
 
     public void addArticleBatchInDB() {
         try {
-            stmt = c.createStatement();
-
-            for (String query : articleBatch) {
-                stmt.addBatch(query);
+        	pstmt = c.prepareStatement("INSERT INTO wiki (name) VALUES(?)");
+        	
+            for (int x=0; x<100; x++) {
+            	pstmt.setString(1, articleBatch.get(x));
+                pstmt.addBatch();
             }
-            stmt.executeBatch();
-            linkBatch.clear();
+            pstmt.executeBatch();
+            articleBatch.clear();
 
-            stmt.close();
+            
         } catch (Exception e) {
         }
     }
@@ -180,20 +190,19 @@ public class Sax extends DefaultHandler {
             addLinkBatchInDB();
         }
 
-        linkBatch.add("INSERT INTO wikilinks (name) VALUES ('" + link + "')");
+        linkBatch.add(link);
     }
 
     public void addLinkBatchInDB() {
-        try {
-            stmt = c.createStatement();
-
-            for (String query : linkBatch) {
-                stmt.addBatch(query);
+    	try {
+    		pstmt2 = c.prepareStatement("INSERT INTO wikilinks (name) VALUES(?)");
+    		
+            for (int x=0; x<100; x++) {
+            	pstmt2.setString(1, linkBatch.get(x));
+                pstmt2.addBatch();
             }
-            stmt.executeBatch();
+            pstmt2.executeBatch();
             linkBatch.clear();
-
-            stmt.close();
         } catch (Exception e) {
         }
     }
