@@ -178,6 +178,7 @@ public class Sax extends DefaultHandler {
                 pstmt.addBatch();
             }
             pstmt.executeBatch();
+            pstmt.close();
             articleBatch.clear();
 
             
@@ -202,6 +203,7 @@ public class Sax extends DefaultHandler {
                 pstmt2.addBatch();
             }
             pstmt2.executeBatch();
+            pstmt2.close();
             linkBatch.clear();
         } catch (Exception e) {
         }
