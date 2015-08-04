@@ -23,6 +23,7 @@ public class Sax  extends DefaultHandler{
 	private String lang;
 	private TreeSet<String> articles = new TreeSet<String>();
 	private ArrayList<String> finalSet;
+	private ArrayList<String> linkBatch;
 	private Connection c = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
@@ -156,6 +157,28 @@ public class Sax  extends DefaultHandler{
 		//Fånga PSQLException om man skriver fel lösenord
 	}
 	
+	public void addLinkToBatch(String link){
+		if(linkBatch.size()==100){
+			addBatchInDB();
+		}
+		
+		linkBatch.add("INSERT INTO wikilinks (name) VALUES ('" + link + "')");
+	}
+	
+	public void addBatchInDB(){
+		try{
+			stmt = c.createStatement();
+					
+			for (String query : linkBatch) {
+				stmt.addBatch(query);
+			}
+			stmt.executeBatch();
+			linkBatch.clear();
+			
+			stmt.close();
+		}catch(Exception e){}
+	}
+	
 	public void addLinkInDB(String link){
 		try{
 			stmt = c.createStatement();
@@ -193,7 +216,7 @@ public class Sax  extends DefaultHandler{
 	public void findMissingArticles(){
 		try{
 			stmt = c.createStatement();
-			rs = stmt.executeQuery("SELECT wikilinks.name, COUNT(name) AS 'occurrence' FROM wikilinks GROUP BY name");
+			rs = stmt.executeQuery("SELECT wikilinks.name, COUNT('name') AS 'occurrence' FROM wikilinks GROUP BY 'name' ORDER BY 'occurrence' ASC");
 			
 			while(rs.next()){
 				stmt.executeUpdate("INSERT INTO freqlinks VALUES ('" + rs.getString("name") + "', " + rs.getInt("occurrence"));
