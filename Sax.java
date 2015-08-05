@@ -23,15 +23,21 @@ public class Sax extends DefaultHandler {
     private String tempVal;
     private String XMLpath;
     private String lang;
+    
     private TreeSet<String> articles = new TreeSet<String>();
     private ArrayList<String> finalSet;
-    private ArrayList<String> articleBatch = new ArrayList<String>();
-    private ArrayList<String> linkBatch = new ArrayList<String>();
+    
+    private String[] articleBatch = new String[100];
+    private String[] linkBatch = new String[100];
+    private int articleIndex = 0;
+    private int linkIndex = 0;
+    
     private Connection c = null;
     private Statement stmt = null;
     private PreparedStatement pstmt = null;
     private PreparedStatement pstmt2 = null;
     private ResultSet rs = null;
+    
     private String tempStr;
     private boolean text = false;
     private boolean article = false;
@@ -164,11 +170,12 @@ public class Sax extends DefaultHandler {
     }
 
     public void addArticleToBatch(String title) {
-        if (articleBatch.size() == 100) {
+        if (articleIndex == 100) {
+        	articleIndex = 0;
             addArticleBatchInDB();
         }
 
-        articleBatch.add(title);
+        articleBatch[articleIndex++] = title;
     }
 
     public void addArticleBatchInDB() {
@@ -176,24 +183,26 @@ public class Sax extends DefaultHandler {
         	pstmt = c.prepareStatement("INSERT INTO wiki (name) VALUES(?)");
         	
             for (int x=0; x<100; x++) {
-            	pstmt.setString(1, articleBatch.get(x));
+            	pstmt.setString(1, articleBatch[x]);
                 pstmt.addBatch();
             }
             pstmt.executeBatch();
             pstmt.close();
-            articleBatch.clear();
-
+            for(int x=0; x<articleBatch.length;x++){
+            	articleBatch[x] = null;
+            }
             
         } catch (Exception e) {
         }
     }
 
     public void addLinkToBatch(String link) {
-        if (linkBatch.size() == 100) {
+        if (linkIndex == 100) {
+        	linkIndex = 0;
             addLinkBatchInDB();
         }
-
-        linkBatch.add(link);
+        
+        linkBatch[linkIndex++] = link;
     }
 
     public void addLinkBatchInDB() {
@@ -217,12 +226,14 @@ public class Sax extends DefaultHandler {
     		pstmt2 = c.prepareStatement("INSERT INTO wikilinks"+tabellNummer+" (name) VALUES(?)");
     		
             for (int x=0; x<100; x++) {
-            	pstmt2.setString(1, linkBatch.get(x));
+            	pstmt2.setString(1, linkBatch[x]);
                 pstmt2.addBatch();
             }
             pstmt2.executeBatch();
             pstmt2.close();
-            linkBatch.clear();
+            for(int x=0; x<linkBatch.length;x++){
+            	linkBatch[x] = null;
+            }
         } catch (Exception e) {
         }
     }
