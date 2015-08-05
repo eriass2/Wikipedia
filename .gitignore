@@ -8,3 +8,27 @@ wiki/src/wiki/Wiki.java
 /bin/
 
 *.project
+/FindLinks.class
+/MySAXApp.class
+/ReadFile.class
+/RedLink$AboutListener.class
+/RedLink$CaseChoiceListener.class
+/RedLink$ChoosePathListener.class
+/RedLink$ExitListener.class
+/RedLink$LangChoiceListener.class
+/RedLink$OpenFileListener.class
+/RedLink$RunListener.class
+/RedLink.class
+/Sax.class
+/SaxPrompt.class
+/ValidLinks.class
+/XMLReader.class
+/temp.class
+/temControl.class
+
+*.classpath
+*.class
+temControl.java
+temp.java
+*.class
+Sax.class
