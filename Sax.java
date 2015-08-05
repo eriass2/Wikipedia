@@ -35,7 +35,7 @@ public class Sax extends DefaultHandler {
     private String tempStr;
     private boolean text = false;
     private boolean article = false;
-    private int addLinknumber = 1000000;
+    private int addLinknumber =9999;
     private int tabellNummer = 1;
 
     public ArrayList<String> getArticles(String path, String u, String p, String l) {
@@ -198,17 +198,17 @@ public class Sax extends DefaultHandler {
 
     public void addLinkBatchInDB() {
     	addLinknumber++;
-    	if(addLinknumber==1000000){
+    	if(addLinknumber==10000){
     		addLinknumber = 0;
     		tabellNummer++;
     		try {
     			stmt = c.createStatement();
-    			stmt.executeUpdate("CREATE TABLE wikilinks" +tabellNummer+ " (name varchar(255), occurrence int)");
-				
-			} catch (SQLException e) {
+    			stmt.execute("CREATE TABLE wikilinks" +tabellNummer+ " (name varchar(255), occurrence int)");
+			stmt.close();
+		} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                    e.printStackTrace();
+		}
     		
     		
     		//Skapa ny tabell
