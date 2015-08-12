@@ -23,7 +23,7 @@ public class RedLink extends JFrame {
 	private File theFile;
 	private JButton chooseBtn, saveBtn, runBtn;
 	private JComboBox<String> caseCh, langCh;
-	private String[] caseLabels = {"","Test", "First 10000 rows", "Find red links", "SAX"};		//Note: If adding or removing cases, you must manually change the switch in RunListener to match them.
+	private String[] caseLabels = {"","Test", "First 10000 rows", "Find red links", "SAX", "Trie"};		//Note: If adding or removing cases, you must manually change the switch in RunListener to match them.
 	private String[] langLabels = {"","English", "Swedish"};
 	private String[] languages = {"en", "sv"};
 	private JTextField pathField, savePathField;
@@ -291,6 +291,14 @@ public class RedLink extends JFrame {
 		break;
 		
 		case 5:
+			WikiTrie wt = new WikiTrie();
+			try{
+				print(wt.getRedLinks(filePath, languages[langVal]));
+			}catch(InterruptedException e){
+				showErrorMessage(e.getMessage());
+			}catch(NoSuchElementException e){
+				showErrorMessage(e.getMessage());
+			}
 		break;
 		
 		case 6:

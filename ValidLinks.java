@@ -5,7 +5,7 @@ public class ValidLinks {
 	//private String user, userT, template, templateT, category, image, file, special, wikipediaT, project, module, help;
 	
 	private String lang;
-	private String[] namespaces_sv = {"diskussion", "användare", "användardiskussion","wikipedia", "wikipediadiskussion", "fil", "fildiskussion", "mediawiki", "mediawiki-diskussion", "mall", "malldiskussion", "hjälp", "hjälpdiskussion", "kategori", "kategoridiskussion","portal", "portaldiskussion", "utbildningsprogram","utbildningsprogramsdiskussion", "modul", "moduldiskussion", "special", "media"};
+	private String[] namespaces_sv = {"diskussion", "användare", "användardiskussion","wikipedia", "wikipediadiskussion", "fil", "fildiskussion", "mediawiki", "mediawiki-diskussion", "mall", "malldiskussion", "hjälp", "hjälpdiskussion", "kategori", "kategoridiskussion","portal", "portaldiskussion", "utbildningsprogram","utbildningsprogramsdiskussion", "modul", "moduldiskussion", "special", "media", "project", "file", "image"};
 	private String[] namespaces_en = {"talk", "user", "user talk", "wikipedia", "wikipedia", "file", "file talk", "mediawiki", "mediawiki talk","template", "template talk", "help", "help talk", "category", "category talk", "portal", "portal talk", "book", "book talk", "draft", "draft talk", "education program", "education program talk", "timedtext", "timedtext talk", "module", "module talk", "topic", "special", "media"};
 	
 	
