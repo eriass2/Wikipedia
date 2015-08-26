@@ -19,9 +19,9 @@ public class XMLReader {
             // Open file
             FileInputStream fstream = new FileInputStream(path);
             //Read File Line By Line
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"), 10000)) {	//Kolla upp vad denna buffert g�r
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF8"), 5000000)) {	//Kolla upp vad denna buffert g�r
                 //Read File Line By Line
-                while ((tempRow = br.readLine()) != null && currentRow < 10000) {
+                while ((tempRow = br.readLine()) != null && currentRow < 5000000) {
                 	finalSet.add(tempRow);
                     currentRow++;
                 }

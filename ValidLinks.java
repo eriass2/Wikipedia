@@ -5,8 +5,8 @@ public class ValidLinks {
 	//private String user, userT, template, templateT, category, image, file, special, wikipediaT, project, module, help;
 	
 	private String lang;
-	private String[] namespaces_sv = {"diskussion", "användare", "användardiskussion","wikipedia", "wikipediadiskussion", "fil", "fildiskussion", "mediawiki", "mediawiki-diskussion", "mall", "malldiskussion", "hjälp", "hjälpdiskussion", "kategori", "kategoridiskussion","portal", "portaldiskussion", "utbildningsprogram","utbildningsprogramsdiskussion", "modul", "moduldiskussion", "special", "media", "project", "file", "image"};
-	private String[] namespaces_en = {"talk", "user", "user talk", "wikipedia", "wikipedia", "file", "file talk", "mediawiki", "mediawiki talk","template", "template talk", "help", "help talk", "category", "category talk", "portal", "portal talk", "book", "book talk", "draft", "draft talk", "education program", "education program talk", "timedtext", "timedtext talk", "module", "module talk", "topic", "special", "media"};
+	private String[] namespaces_sv = {"diskussion", "anvï¿½ndare", "anvï¿½ndardiskussion","wikipedia", "wikipediadiskussion", "fil", "fildiskussion", "mediawiki", "mediawiki-diskussion", "mall", "malldiskussion", "hjï¿½lp", "hjï¿½lpdiskussion", "kategori", "kategoridiskussion","portal", "portaldiskussion", "utbildningsprogram","utbildningsprogramsdiskussion", "modul", "moduldiskussion", "special", "media", "project", "file", "image"};
+	private String[] namespaces_en = {"talk", "user", "user talk", "wikipedia talk", "wikipedia", "file", "file talk", "mediawiki", "mediawiki talk","template", "template talk", "help", "help talk", "category", "category talk", "portal", "portal talk", "book", "book talk", "draft", "draft talk", "education program", "education program talk", "timedtext", "timedtext talk", "module", "module talk", "topic", "special", "media", "project", "tools:", "file", "image", "wt"};
 	
 	
     /**
@@ -22,7 +22,7 @@ public class ValidLinks {
         if(link.equals(""))
             return false;
         
-        if ((link.contains("#")) || (link.contains("%23")) || (link.contains("//")) || (link.contains("{{")) || (link.equals(" ")) || (link.startsWith("[[")) || (link.startsWith(":"))|| (link.startsWith("\\b"))) {
+        if ((link.contains("#")) || (link.contains("%23")) || (link.contains("//")) || (link.contains("{{")) || (link.equals(" ")) || (link.startsWith("[[")) || (link.startsWith(":"))|| (link.startsWith("\\b"))|| (link.startsWith("edit="))|| (link.startsWith("move="))){
             return false;
         } else if ((link.startsWith("commons:"))||(link.startsWith("c:"))|| (link.startsWith("wp:")) || (link.startsWith("wikipedia:"))|| (link.startsWith("wiktionary:")) || (link.startsWith("wikt:"))) {
             return false;

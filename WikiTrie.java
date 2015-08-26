@@ -16,7 +16,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import org.ardverk.collection.PatriciaTrie;
+
 
 import trie.StringRadixTreeMap;
 
@@ -54,10 +54,13 @@ public class WikiTrie {
 			link = link.substring(1);
 		}
 
-		if (link.contains("&ndash;")) {
-			link = link.replace("&ndash;", "-");
+		if (link.contains("\u2013")) {
+			link = link.replace("\u2013", "-");
 		}
-		link = link.replace("&ndash", "-");
+                if (link.contains("\u00a0")){
+                    link = link.replace("\u00a0", "");
+                }
+
 		if (!articles.containsKey(link.toLowerCase())) {
 			if (missing.containsKey(link)) {
 				int g = missing.get(link);
@@ -124,7 +127,7 @@ public class WikiTrie {
 			System.err.println("File is very error.");
 			System.exit(0);
 		}
-		System.out.println("Artiklar klara, länkar börjar");
+		System.out.println("Artiklar klara, lï¿½nkar bï¿½rjar");
 		try {
 			// Open file
 			FileInputStream fstream = new FileInputStream(path);
