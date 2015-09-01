@@ -23,7 +23,8 @@ public class RedLink extends JFrame {
 	private File theFile;
 	private JButton chooseBtn, saveBtn, runBtn;
 	private JComboBox<String> caseCh, langCh;
-	private String[] caseLabels = {"","Test", "First 10000 rows", "Find red links", "SAX", "Trie","Cat"};		//Note: If adding or removing cases, you must manually change the switch in RunListener to match them.
+	private String[] caseLabels = {"", "Red links - most common", "Red links - by category", "10000 first lines"};
+	//private String[] caseLabels = {"","Test", "First 10000 rows", "Find red links", "SAX", "Trie","Cat"};		//Note: If adding or removing cases, you must manually change the switch in RunListener to match them.
 	private String[] langLabels = {"","English", "Swedish"};
 	private String[] languages = {"en", "sv"};
 	private JTextField pathField, savePathField;
@@ -32,40 +33,22 @@ public class RedLink extends JFrame {
 	private ArrayList<String> testSet = new ArrayList<String>();
 	public static JTextArea area;
 	public static TreeSet<String> articles = new TreeSet<>();
-	
-	/*TESTMENY, TA BORT INNAN RELEASE! */
-	private JMenuBar mm;
-	private JMenu test;
-	private JMenuItem runSAX;
-	
-	/*TESTMENY SLUT, TA BORT INNAN RELEASE! */
 
 	public RedLink() {
-		super("RedLink District 1.5.2");
+		super("RedLink District 1.6.2");
 		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {}
 		
-		/*TESTMENY, TA BORT INNAN RELEASE! */
-		mm = new JMenuBar();
-		mm.add(test = new JMenu("Test"));
-		test.add(runSAX = new JMenuItem("Run SAX TEST"));
-		runSAX.addActionListener(new SAXTest());
-		setJMenuBar(mm);
-		
-		/*TESTMENY SLUT, TA BORT INNAN RELEASE! */
-		
-
-		
-		
+	
 		
 		populate();
 		
-		TitledBorder tit1 = new TitledBorder("1. -  Choose xml-file");
+		TitledBorder tit1 = new TitledBorder("1. -  Choose XML-file");
 		TitledBorder tit2 = new TitledBorder("2. -  Choose target folder for generated file");
 		TitledBorder tit3 = new TitledBorder("3. -  Choose algorithm");
-		TitledBorder tit4 = new TitledBorder("4. -  Choose article language");
+		TitledBorder tit4 = new TitledBorder("4. -  Choose database language");
 		TitledBorder tit5 = new TitledBorder("5. -  Run");
 
 		JPanel norr = new JPanel();
@@ -252,10 +235,29 @@ public class RedLink extends JFrame {
 		break;
 		
 		case 1:
-			print(testSet);
+			WikiTrie wt = new WikiTrie();
+			try{
+				print(wt.getRedLinks(filePath, languages[langVal]));
+			}catch(InterruptedException e){
+				showErrorMessage(e.getMessage());
+			}catch(NoSuchElementException e){
+				showErrorMessage(e.getMessage());
+			}
 		break;
 		
 		case 2:
+                    	PopularLink pl = new PopularLink();
+			try{
+				print(pl.getRedLinks(filePath, languages[langVal]));
+			}catch(InterruptedException e){
+				showErrorMessage(e.getMessage());
+			}catch(NoSuchElementException e){
+				showErrorMessage(e.getMessage());
+			}
+		break;
+		
+		
+		case 3:
 			XMLReader xr = new XMLReader();
 			try{
 				print(xr.getArticles(filePath));
@@ -264,7 +266,15 @@ public class RedLink extends JFrame {
 			}
 		break;
 		
-		case 3:
+		/*
+		
+		case 4:
+			print(testSet);
+		break;
+		
+		
+		
+		case 5:
 			FindLinks vl = new FindLinks();
 			try{
 				print(vl.getRedLinks(filePath, languages[langVal]));
@@ -276,7 +286,7 @@ public class RedLink extends JFrame {
 			
 		break;
 		
-		case 4:
+		case 6:
 			SaxPrompt sp = new SaxPrompt();
 			if(showConfirmDialog(RedLink.this, sp, "Login to database",OK_CANCEL_OPTION)== OK_OPTION){
 				Sax sxml = new Sax();
@@ -289,29 +299,8 @@ public class RedLink extends JFrame {
 			}
 			
 		break;
+		*/
 		
-		case 5:
-			WikiTrie wt = new WikiTrie();
-			try{
-				print(wt.getRedLinks(filePath, languages[langVal]));
-			}catch(InterruptedException e){
-				showErrorMessage(e.getMessage());
-			}catch(NoSuchElementException e){
-				showErrorMessage(e.getMessage());
-			}
-		break;
-		
-		case 6:
-                    	PopularLink pl = new PopularLink();
-			try{
-				print(pl.getRedLinks(filePath, languages[langVal]));
-			}catch(InterruptedException e){
-				showErrorMessage(e.getMessage());
-			}catch(NoSuchElementException e){
-				showErrorMessage(e.getMessage());
-			}
-		break;
-	
 		default:
 		break;
 		}
