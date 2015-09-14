@@ -17,7 +17,7 @@ public class FindLinks {
      */
     public TreeSet<String> articles = new TreeSet<>();
     public HashMap<String, Integer> missing = new HashMap<>();
-    private ArrayList<String> finalSet = new ArrayList<String>();
+    private ArrayList<String> finalSet = new ArrayList<>();
     
     private String lang;
     
@@ -37,6 +37,7 @@ public class FindLinks {
      * Takes a link and checks if it already exists in article, otherwise it is
      * deemed missing and checked if it exists in list "missing" thereafter
      * added to list "missing" and amount increased by 1.
+     * @param link
      */
     public void linkMissing(String link) {
         if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {//Removes last empty space.

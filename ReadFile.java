@@ -44,6 +44,7 @@ public class ReadFile {
      * Takes a link and checks if it already exists in article, otherwise it is
      * deemed missing and checked if it exists in list "missing" thereafter
      * added to list "missing" and amount increased by 1.
+     * @param link
      */
     public static void linkMissing(String link) {
         if (link.length() > 0 && link.charAt(link.length() - 1) == ' ') {//Removes last empty space.

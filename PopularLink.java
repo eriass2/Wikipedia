@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import trie.StringRadixTreeMap;
@@ -26,8 +25,8 @@ import trie.StringRadixTreeMap;
  */
 public class PopularLink {
 
-    private StringRadixTreeMap<Integer> catagory = new StringRadixTreeMap<Integer>();
-    private ArrayList<String> finalSet = new ArrayList<String>();
+    private StringRadixTreeMap<Integer> catagory = new StringRadixTreeMap<>();
+    private ArrayList<String> finalSet = new ArrayList<>();
     private String lang;
     private String target ="Korea";
     private String ns;
@@ -38,10 +37,13 @@ public class PopularLink {
 
         lang = l;
         
-        if(lang=="en"){
-            ns = "[[Category:";
-        }else if(lang=="sv"){
-            ns = "[[Kategori:";
+        if(null != lang)switch (lang) {
+            case "en":
+                ns = "[[Category:";
+                break;
+            case "sv":
+                ns = "[[Kategori:";
+                break;
         }
 
         readArticle(path, lang);

@@ -13,10 +13,10 @@ public class MySAXApp extends DefaultHandler{
 		xr.setContentHandler(handler);
 		xr.setErrorHandler(handler);
 		
-		for(int i = 0;i < args.length; i++){
-			FileReader r = new FileReader(args[i]);
-			xr.parse(new InputSource(r));
-		}
+            for (String arg : args) {
+                FileReader r = new FileReader(arg);
+                xr.parse(new InputSource(r));
+            }
 		
 	}
 	
@@ -25,14 +25,17 @@ public class MySAXApp extends DefaultHandler{
 		super();
 	}
 	
+        @Override
 	public void startDocument(){
 		System.out.println("Start document");
 	}
 	
+        @Override
 	public void endDocument(){
 		System.out.println("End document");
 	}
 	
+        @Override
     public void startElement (String uri, String name,
 		      String qName, Attributes atts)
 	{
@@ -43,6 +46,7 @@ public class MySAXApp extends DefaultHandler{
 	}
 	
 	
+        @Override
 	public void endElement (String uri, String name, String qName)
 	{
 	if ("".equals (uri))
@@ -52,6 +56,7 @@ public class MySAXApp extends DefaultHandler{
 	}
 	
 	
+        @Override
 	public void characters (char ch[], int start, int length){
 		System.out.print("Characters:    \"");
 		for (int i = start; i < start + length; i++) {

@@ -11,8 +11,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 import static javax.swing.JOptionPane.*;
 
@@ -30,7 +28,7 @@ public class RedLink extends JFrame {
 	private JTextField pathField, savePathField;
 	private int caseVal, langVal;
 	private boolean fileExists;
-	private ArrayList<String> testSet = new ArrayList<String>();
+	private ArrayList<String> testSet = new ArrayList<>();
 	public static JTextArea area;
 	public static TreeSet<String> articles = new TreeSet<>();
 
@@ -39,7 +37,7 @@ public class RedLink extends JFrame {
 		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {}
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {}
 		
 	
 		
@@ -115,6 +113,7 @@ public class RedLink extends JFrame {
 	//		Listener used to choose an xml-file, and then unlocking step 2
 
 	public class OpenFileListener implements ActionListener {
+                @Override
 		public void actionPerformed(ActionEvent eve) {
 			
 			fc = new JFileChooser();
@@ -134,6 +133,7 @@ public class RedLink extends JFrame {
 //	Listener used to choose a target folder for the generated txt-file, and then unlocking step 3
 
 	public class ChoosePathListener implements ActionListener {
+                @Override
 		public void actionPerformed(ActionEvent eve) {
 			
 			fo = new JFileChooser();
@@ -153,6 +153,7 @@ public class RedLink extends JFrame {
 //	Listener used to choose algorithm for browsing xml-file, and then unlocking step 4
 	
 	public class CaseChoiceListener implements ActionListener{
+                @Override
 		public void actionPerformed(ActionEvent eve){
 			if(caseCh.getSelectedIndex() > 0){
 				caseVal = caseCh.getSelectedIndex();
@@ -167,6 +168,7 @@ public class RedLink extends JFrame {
 //	Listener used to enable language options for xml-search
 	
 	public class LangChoiceListener implements ActionListener{
+                @Override
 		public void actionPerformed(ActionEvent eve){
 			if(langCh.getSelectedIndex() > 0){
 				langVal = langCh.getSelectedIndex()-1;
@@ -181,6 +183,7 @@ public class RedLink extends JFrame {
 //	Listener used to start algorithm
 	
 	public class RunListener implements ActionListener {
+                @Override
 		public void actionPerformed(ActionEvent eve) {
 			chooseBtn.setEnabled(false);
 			saveBtn.setEnabled(false);
@@ -207,12 +210,12 @@ public class RedLink extends JFrame {
 //	Listener used to alert user on exit
 	
 	public class ExitListener extends WindowAdapter {
+                @Override
 		public void windowClosing(WindowEvent we) {
 			if (showConfirmDialog(RedLink.this, "Exit? Really?!", "Message",
 					YES_NO_OPTION) == YES_OPTION) {
 				System.exit(0);
 			} else {
-				return;
 			}
 		}
 	}
@@ -220,6 +223,7 @@ public class RedLink extends JFrame {
 //	Listener used to show information about application and copyrights.
 	
 	public class AboutListener implements ActionListener {
+                @Override
 		public void actionPerformed(ActionEvent eve) {
 			showMessageDialog(RedLink.this, "yada yada Assar och Jacke 2015",
 					"About", INFORMATION_MESSAGE);
@@ -238,9 +242,7 @@ public class RedLink extends JFrame {
 			WikiTrie wt = new WikiTrie();
 			try{
 				print(wt.getRedLinks(filePath, languages[langVal]));
-			}catch(InterruptedException e){
-				showErrorMessage(e.getMessage());
-			}catch(NoSuchElementException e){
+			}catch(InterruptedException | NoSuchElementException e){
 				showErrorMessage(e.getMessage());
 			}
 		break;
@@ -249,9 +251,7 @@ public class RedLink extends JFrame {
                     	PopularLink pl = new PopularLink();
 			try{
 				print(pl.getRedLinks(filePath, languages[langVal]));
-			}catch(InterruptedException e){
-				showErrorMessage(e.getMessage());
-			}catch(NoSuchElementException e){
+			}catch(InterruptedException | NoSuchElementException e){
 				showErrorMessage(e.getMessage());
 			}
 		break;
@@ -362,6 +362,7 @@ public class RedLink extends JFrame {
 	}
 	
 	public class SAXTest implements ActionListener{
+                @Override
 		public void actionPerformed(ActionEvent eve){
 				Sax sxml = new Sax();
 				

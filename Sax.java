@@ -78,20 +78,18 @@ public class Sax extends DefaultHandler {
             //parse the file and also register this class for call backs
             sp.parse(XMLpath, this);
 
-        } catch (SAXException se) {
+        } catch (SAXException | ParserConfigurationException | IOException se) {
             se.printStackTrace();
-        } catch (ParserConfigurationException pce) {
-            pce.printStackTrace();
-        } catch (IOException ie) {
-            ie.printStackTrace();
         }
     }
 
     /**
      * Iterate through the list and print the contents
+     * @throws org.xml.sax.SAXException
      */
 
     //Event Handlers
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         //reset
         tempVal = "";
@@ -106,6 +104,7 @@ public class Sax extends DefaultHandler {
 
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (article || text) {
             tempVal = new String(ch, start, length);
@@ -115,6 +114,7 @@ public class Sax extends DefaultHandler {
         }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
         if (qName.equalsIgnoreCase("title")) {
@@ -161,7 +161,7 @@ public class Sax extends DefaultHandler {
             c = DriverManager
                     .getConnection("jdbc:postgresql://localhost:5432/Test",
                             user, pwd);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             RedLink.area.append(e.getClass().getName() + ": " + e.getMessage() + "\n");
         }
