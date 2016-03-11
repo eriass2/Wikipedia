@@ -33,6 +33,9 @@ public class RedLink extends JFrame {
 	public static TreeSet<String> articles = new TreeSet<>();
 
 	public RedLink() {
+		
+		/*
+		
 		super("RedLink District 1.6.2");
 		
 		try {
@@ -107,6 +110,13 @@ public class RedLink extends JFrame {
 		setSize(600, 450);
 		setVisible(true);
 		setLocationRelativeTo(null);
+		
+		*/
+		filePath = "svwiki-latest-pages-meta-current.xml";
+		savePath = "";
+		langVal = 1;
+		caseVal = 1;
+		StartSearch();
 	}
 	
 	
