@@ -114,9 +114,10 @@ public class RedLink extends JFrame {
 		setLocationRelativeTo(null);
 		
 		*/
-		filePath = "svwiki-latest-pages-meta-current.xml";
-		savePath = "";
-		langVal = 1;
+		filePath = "E:\\enwiki-20160204-pages-meta-current.xml";
+		savePath = "E:\\logg";
+		langVal = 0;
+                fileExists = true;
 		caseVal = 1;
 		StartSearch();
 	}
@@ -331,41 +332,46 @@ public class RedLink extends JFrame {
 //	Method that saves results from chosen algorithm to file
 
 	public void print(ArrayList<String> data){
-		
+		System.out.println("print");
 		int fileVersion = 0;
 
         try {
-            
+            System.out.println("try");
             while (fileExists) {
 
                 theFile = new File(savePath + "\\newList" + fileVersion + ".txt");
-
+System.out.println(theFile.getAbsolutePath());
                 if (theFile.exists()) {
                     fileVersion++;
+                    System.out.println("if");
                 }
                 else {
+                    System.out.println("else");
 
                     fileExists = false;
 
                     theFile.createNewFile();
+                    
 
                     FileWriter fw = new FileWriter(theFile.getAbsoluteFile());
                     try (BufferedWriter bw = new BufferedWriter(fw)) {
                         for (String s : data) {
                             bw.write(s + "\r\n");
                         }
+                        
                     }
-
-                    area.append("File saved.");
+System.out.println("append");
+                    //area.append("File saved.");
 
                 }
             }
 
         } catch (IOException e) {
-            area.append("Save is very error.");
+           // area.append("Save is very error.");
+            System.out.println("Save is very error.");
         }
     
-        showMessageDialog(RedLink.this,"Successfully created file:\n" + theFile.getAbsolutePath() + ".\nProgram will now terminate.","Message",INFORMATION_MESSAGE);
+        //showMessageDialog(RedLink.this,"Successfully created file:\n" + theFile.getAbsolutePath() + ".\nProgram will now terminate.","Message",INFORMATION_MESSAGE);
         System.exit(0);
 	        
 	}

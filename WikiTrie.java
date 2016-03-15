@@ -30,11 +30,12 @@ public class WikiTrie {
         lang = l;
 
         readArticle(path, lang);
-        RedLink.area.append("Articles found :" + articles.size()
-                + "\n Missing articles :" + missing.size() + "\r\n");
+        //RedLink.area.append("Articles found :" + articles.size()
+         //       + "\n Missing articles :" + missing.size() + "\r\n");
         articles.clear();
         saveListToFile();
         Collections.reverse(finalSet);
+        System.out.println("return");
         return finalSet;
     }
 
@@ -210,6 +211,7 @@ public class WikiTrie {
             it.remove();
             p++;
         }
+        System.out.println("Fixar text k");
     }
 
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(

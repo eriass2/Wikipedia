@@ -37,7 +37,7 @@ public class XMLReader {
         }
         
         
-        RedLink.area.append("Scanned rows :" + currentRow + "\n");	//Message
+       // RedLink.area.append("Scanned rows :" + currentRow + "\n");	//Message
         return finalSet;
     }
 
